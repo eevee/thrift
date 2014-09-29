@@ -118,10 +118,12 @@ class TBinaryProtocol(TProtocolBase):
     buff = pack("!d", dub)
     self.trans.write(buff)
 
-  def writeString(self, str):
-    encoded = bytearray(str, 'utf-8')
-    self.writeI32(len(encoded))
-    self.trans.write(encoded)
+  def writeString(self, buf):
+    # Write either bytes or str object
+    if isinstance(buf, str):
+        buf = bytearray(buf, 'utf-8')
+    self.writeI32(len(buf))
+    self.trans.write(buf)
 
   def readMessageBegin(self):
     sz = self.readI32()
@@ -219,9 +221,13 @@ class TBinaryProtocol(TProtocolBase):
     return val
 
   def readString(self):
-    len = self.readI32()
-    str = self.trans.readAll(len).decode('utf-8')
-    return str
+    len_data = self.readI32()
+    read_buf = self.trans.readAll(len_data)
+    try:
+        read_buf = read_buf.decode('utf-8')
+    except:
+        pass
+    return read_buf
 
 
 class TBinaryProtocolFactory:

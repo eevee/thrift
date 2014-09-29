@@ -18,7 +18,6 @@
 #
 
 from io import BytesIO
-from cStringIO import StringIO as BytesIO
 from struct import pack, unpack
 from thrift.Thrift import TException
 
